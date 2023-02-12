@@ -17,6 +17,7 @@ class color:
 
 sourceFile = open('results_reverse', 'a')
 prompt = []
+model = ["text-davinci-003","text-curie-001","text-babbage-001","text-ada-001", "code-davinci-002", "code-cushman-001"]
 
 prompt.append("""
 SELECT City, COUNT(CustomerID) AS CustomersCount
@@ -35,20 +36,28 @@ CREATE TABLE friends (StartDate date) AS EDGE;
 """)
 
 for  i in range (len(prompt)):
-  response = openai.Completion.create(
-    model="code-davinci-002",
-    prompt=prompt[i],
-    temperature=0,
-    max_tokens=1000,
-    top_p=1,
-    frequency_penalty=0.0,
-    presence_penalty=0.0,
-    stop=["\n\n"]
-  )
+    for j in range (len(model)):
+        k_iter = [k * 0.5 for k in range(0, 5)]
+        for k in k_iter:
+            response = openai.Completion.create(
+                model=model[j],
+                prompt=prompt[i],
+                temperature=k,
+                max_tokens=1000,
+                top_p=1,
+                frequency_penalty=0.0,
+                presence_penalty=0.0,
+                stop=["\n\n"]
+            )
 
-  if 'choices' in response:
-    print(color.DARKCYAN + prompt[i] + color.END + response['choices'][0]['text'] + "\n\n")
-    print(color.DARKCYAN + prompt[i] + color.END + response['choices'][0]['text'] + "\n\n", file = sourceFile)
+            print("Model: " + model[j] + "\n")
+            print("Temperature: %.1f \n" % k)
+
+            if 'choices' in response:
+                print(color.DARKCYAN + prompt[i] + color.END + response['choices'][0]['text'] + "\n\n")
+                print(color.DARKCYAN + prompt[i] + color.END + response['choices'][0]['text'] + "\n\n", file = sourceFile)
+
+
 
 
 
